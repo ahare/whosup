@@ -1,20 +1,27 @@
 require "coreaudio"
 require "socket"
 require "multi_json"
+require "artii"
 
 module Whosup
   class Server
 
-    def self.start
+    def start
 
-      device = CoreAudio.default_input_device
-      input = device.input_buffer(1024)
+      puts "=" * Whosup::Terminal.columns
+      puts Artii::Base.new.asciify("Who's Up?")
+      puts "Waiting for the client to connect..."
+
+      input = CoreAudio.default_input_device.input_buffer(1024)
 
       server = TCPServer.open(2000)
-      puts "#{"="*80}\nstarting server\n#{"="*80}"
       client = server.accept
-      puts "#{"="*80}\nclient accepted\n#{"="*80}"
       input.start
+
+      puts "Client connected!"
+      puts "Press Ctl+C to shutdown the server..."
+
+      puts "=" * Whosup::Terminal.columns
 
       loop do
         client.puts MultiJson.dump(input.read(4096).to_a)
@@ -22,4 +29,5 @@ module Whosup
     end
 
   end
+
 end

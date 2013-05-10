@@ -23,7 +23,7 @@ module Whosup
     end
 
     def columns
-      @columns ||= (`tput cols`.chomp.to_i - 10)
+      @columns ||= Whosup::Terminal.columns
     end
 
   end
