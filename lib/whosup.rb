@@ -1,5 +1,5 @@
 require "whosup/version"
+require "whosup/server"
 
 module Whosup
-  # Your code goes here...
 end
