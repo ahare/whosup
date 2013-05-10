@@ -1,38 +1,24 @@
 require "coreaudio"
+require "socket"
+require "multi_json"
 
 module Whosup
   class Server
 
     def self.start
 
-      dev = CoreAudio.default_input_device
-      buf = dev.input_buffer(1024)
+      input = CoreAudio.default_input_device.input_buffer(1024)
 
-      wav = CoreAudio::AudioFile.new("/Users/drew/Desktop/sample.wav", :write, :format => :wav,
-                                     :rate => dev.nominal_rate,
-                                     :channels => dev.input_stream.channels)
+      server = TCPServer.open(2000)
+      puts "#{"="*80}\nstarting server\n#{"="*80}"
+      client = server.accept
+      puts "#{"="*80}\nclient accepted\n#{"="*80}"
+      input.start
 
-      samples = 0
-      th = Thread.start do
-        loop do
-          w = buf.read(4096)
-          samples += w.size / dev.input_stream.channels
-          wav.write(w)
-        end
+      loop do
+        client.puts MultiJson.dump(input.read(4096).to_a)
       end
-
-      buf.start;
-      $stdout.print "RECORDING..."
-      $stdout.flush
-      sleep 5;
-      buf.stop
-      $stdout.puts "done."
-      th.kill.join
-
-      wav.close
-
-      puts "#{samples} samples read."
-      puts "#{buf.dropped_frame} frame dropped."
     end
+
   end
 end

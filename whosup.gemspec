@@ -18,4 +18,6 @@ Gem::Specification.new do |gem|
 
   gem.add_dependency "thor"
   gem.add_dependency "coreaudio"
+  gem.add_dependency "multi_json"
+  gem.add_dependency "oj"
 end
