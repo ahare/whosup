@@ -7,7 +7,8 @@ module Whosup
 
     def self.start
 
-      input = CoreAudio.default_input_device.input_buffer(1024)
+      device = CoreAudio.default_input_device
+      input = device.input_buffer(1024)
 
       server = TCPServer.open(2000)
       puts "#{"="*80}\nstarting server\n#{"="*80}"

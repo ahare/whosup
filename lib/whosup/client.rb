@@ -2,19 +2,23 @@ require "socket"
 require "narray"
 require "multi_json"
 
+
 module Whosup
   class Client
 
     def self.start
 
-      outbuf = CoreAudio.default_output_device.output_buffer(1024)
+      meter = Meter.new
+      output = CoreAudio.default_output_device.output_buffer(1024)
 
       host, port = "localhost", 2000
 
-      outbuf.start
+      output.start
       TCPSocket.open(host, port) do |socket|
         while message = socket.gets
-          outbuf << MultiJson.load(message)
+          data = MultiJson.load(message)
+          output << data
+          meter << data
         end
       end
     end
